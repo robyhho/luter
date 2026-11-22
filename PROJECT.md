@@ -38,12 +38,15 @@ Two users, each with their own profile.
 | 13 | No browser built-in speech recognition | Unreliable in iOS home screen apps and poor with learner Mandarin |
 | 14 | Skip Gemini Live Translate | It is an interpreter, we want a conversation partner |
 | 15 | Plan and docs live in the repo as markdown | Personal project, kept out of work Notion and Drive |
+| 16 | UI follows [ElevenLabs UI](https://ui.elevenlabs.io), using Tailwind, shadcn/ui and its registry components | Ready-made voice components (orb, waveform, conversation) with a polished voice-first feel. Display only, no ElevenLabs SDK or account |
+| 17 | Mascot: an orange persimmon blob with a leaf (`design/mascot-original.png`). It's the tutor's face, the app icon, and is animated in phase 5 | Gives the tutor a character. Replaces the ElevenLabs orb as the tutor-state visual, which also avoids shipping three.js |
 
 ## Stack
 
 | Layer | Choice |
 |---|---|
 | Frontend | Vite, React, TypeScript, PWA manifest |
+| UI | Tailwind CSS, shadcn/ui, ElevenLabs UI components (reference: ui.elevenlabs.io) |
 | Voice | Gemini Live API over WebSocket (`@google/genai`), model name held in config |
 | Background text | Gemini Flash (translations, feedback cards, vocabulary checks) |
 | Auth to Gemini | Short-lived tokens minted by the Worker, API key never in the browser |

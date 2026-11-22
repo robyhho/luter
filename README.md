@@ -28,6 +28,18 @@ Run each check from [PHASEZERO.md](PHASEZERO.md):
 - Use **Copy report** at the end of a session to paste the settings, latency figures and transcript into notes.
 - If the voice or latency fails, try another voice or model from the dropdowns first. Then try `vadSilenceMs` in `src/config.ts` (lower is snappier, but you may get cut off mid-sentence).
 
+## UI
+
+The look and feel follows [ElevenLabs UI](https://ui.elevenlabs.io), an open source set of voice and agent components built on shadcn/ui. We use Tailwind and shadcn/ui, and add its components into `src/components/ui`:
+
+```sh
+npx shadcn@latest add https://ui.elevenlabs.io/r/orb.json
+```
+
+They're used for display only. All the voice runs on Gemini Live, not ElevenLabs. Rules for this are in CLAUDE.md.
+
+The tutor's face is the mascot, an orange persimmon blob: source art in `design/`, app copies in `public/`. It's static for now and becomes animated in phase 5 ([PHASEFIVE.md](PHASEFIVE.md)).
+
 ## Where things are
 
 | File | What |

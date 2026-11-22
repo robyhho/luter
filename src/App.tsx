@@ -79,7 +79,9 @@ export function App() {
 
   return (
     <main>
-      <h1>Luter spike</h1>
+      <h1>
+        <img src="/mascot.png" alt="" width={40} height={40} /> Luter
+      </h1>
 
       <section className="controls">
         <label>

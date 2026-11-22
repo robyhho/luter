@@ -24,6 +24,13 @@ Turn the phase 0 spike into a real app: both users hold a 10 minute spoken conve
 
 ## Tasks
 
+### UI foundation
+
+- [ ] Add Tailwind and shadcn/ui to the Vite app
+- [ ] Add ElevenLabs UI components (conversation, message, voice button, a visualiser) and drive them from the Live session state
+- [ ] Mobile-first layout: transcript fills the screen, main button within thumb reach
+- [ ] Static mascot as the tutor avatar (light CSS idle motion at most, full animation is phase 5)
+
 ### Hosting, tokens and login
 
 - [ ] Cloudflare Pages project and one Worker
@@ -60,7 +67,7 @@ Turn the phase 0 spike into a real app: both users hold a 10 minute spoken conve
 
 ### PWA
 
-- [ ] Manifest and icons, install to iPhone home screen
+- [ ] Manifest using the mascot icons in `public/icons/`, install to iPhone home screen
 - [ ] Confirm mic permission and audio playback work in the installed app
 - [ ] Keep the screen awake during a session
 
