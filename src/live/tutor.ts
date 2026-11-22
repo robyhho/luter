@@ -69,7 +69,7 @@ export class Tutor {
 
       const prompt = prompts[opts.mode]
       this.kickoff = prompt.kickoff
-      const ai = new GoogleGenAI({ apiKey })
+      const ai = new GoogleGenAI({ apiKey, httpOptions: { apiVersion: config.apiVersion } })
       this.events.log(`connecting to ${opts.model} with voice ${opts.voice}`)
       this.session = await ai.live.connect({
         model: opts.model,

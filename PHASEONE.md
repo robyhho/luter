@@ -68,7 +68,7 @@ Turn the phase 0 spike into a real app: both users hold a 10 minute spoken conve
 
 | Question | How |
 |---|---|
-| Is it still fluent on a phone over mobile data? | Time from end of speech to first audio |
+| Is it still fluent on a phone over mobile data? | Time from end of speech to first audio. Phase 0 baseline on the Mac: median 940ms with VAD silence at 600ms. Try 500ms if it feels slow |
 | Does a session survive a reconnect? | Run a session past 10 minutes |
 | Does it stay on topic and simple? | Count words per session you had to look up |
 | Does the free tier hold up? | Note any refusals over a week of use |

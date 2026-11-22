@@ -21,8 +21,8 @@ Speak Mandarin to it on the Mac and decide whether the latency and voice are goo
 ### Setup
 
 - [x] Create the app with Vite, React, TypeScript
-- [ ] Push to a private repo on personal GitHub (steps in README.md)
-- [ ] Create a Google AI Studio project and API key (personal Google account, steps in README.md)
+- [x] Push to a private repo on personal GitHub (robyhho/luter)
+- [x] Create a Google AI Studio project and API key (personal Google account, steps in README.md)
 - [x] Confirm which current Live model has free tier access (`gemini-3.8-live`, see PROJECT.md)
 - [x] `config.ts` holding model name and voice
 - [x] API key in `.env.local` for local use only, never committed or deployed
@@ -50,6 +50,22 @@ Speak Mandarin to it on the Mac and decide whether the latency and voice are goo
 | Does it hear beginner Mandarin? | Compare the transcript of your turns with what you said | Mostly correct |
 | Does it stay simple and on topic? | A 5 minute food conversation | You follow most of it |
 | Does the English side sound natural? | A 5 minute English chat | The English learner is happy with it |
+
+## Results (2026-11-22)
+
+Setup: `gemini-3.8-live`, default voices, VAD silence 600ms, Mac in the browser.
+
+| Question | Result |
+|---|---|
+| Does it feel like a conversation? | Yes, just: median 940ms over 15 turns, 60% under 1s, worst 1385ms. About 600ms of that is the VAD silence wait |
+| Is the Mandarin voice good enough? | Yes, tones sound right |
+| Does it hear beginner Mandarin? | Yes, transcript mostly correct |
+| Does it stay simple and on topic? | Yes, followed most of a food chat |
+| Does the English side sound natural? | Yes, the English learner is happy |
+
+Verdict: build phase 1 on Gemini Live. No change of voice provider needed.
+
+Gotcha found: the SDK connects Live on the `v1` API by default, which fails. Use `v1beta` (in config). See PROJECT.md.
 
 ## Done when
 

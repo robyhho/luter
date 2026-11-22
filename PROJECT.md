@@ -87,6 +87,7 @@ Two users, each with their own profile.
 | Free tier limits concurrent sessions per project | Second free API key if both users clash |
 | Free tier data is used to improve Google products | Accepted for now, goes away on paid |
 | Live models are renamed and retired often | Model name in config |
+| `@google/genai` connects Live on the `v1` API by default, which rejects the session (1006). Found 2026-11-22 | `apiVersion: 'v1beta'` in config. Ephemeral tokens use `v1alpha`, and both were tested working with an AI Studio `AQ.` key |
 
 Sessions are designed to be about 10 minutes, one scenario each, so most never need the reconnect.
 
@@ -104,7 +105,7 @@ Sessions are designed to be about 10 minutes, one scenario each, so most never n
 
 ## Open questions
 
-- Does the Live model stay inside a topic and simple vocabulary well enough? Tested in phase zero.
-- Is the Mandarin voice quality and tone accuracy good enough for a learner? Tested in phase zero.
+- ~~Does the Live model stay inside a topic and simple vocabulary well enough?~~ Yes for a 5 minute food chat with a prompt alone (phase 0, 2026-11-22). Longer sessions and stored vocabulary are tested in phase 2.
+- ~~Is the Mandarin voice quality and tone accuracy good enough for a learner?~~ Yes (phase 0, 2026-11-22).
 - ~~Which current Live model has free tier access?~~ Answered 2026-11-22: `gemini-3.8-live` (Google's recommended Live model) is free of charge on the free tier. Fallbacks in config: `gemini-3.1-flash-live-preview`, `gemini-2.5-flash-native-audio-preview-12-2025`. Rate limits are per project and shown in AI Studio.
 
