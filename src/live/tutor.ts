@@ -4,6 +4,8 @@ import { prompts } from '../prompts'
 import { bytesToBase64 } from '../audio/base64'
 import { startMic, type Mic, type MicChunk } from '../audio/mic'
 import { PcmPlayer } from '../audio/player'
+import { keepScreenAwake, setAudioSession } from '../device'
+import { fetchLiveToken } from './token'
 
 export type Status = 'idle' | 'connecting' | 'live' | 'error'
 
@@ -27,12 +29,13 @@ export interface TutorEvents {
   log(message: string): void
 }
 
-/** Phase 0 spike: one Live session, mic in, audio out, transcript of both sides. */
+/** One Live session: mic in, audio out, transcript of both sides. */
 export class Tutor {
   private ctx?: AudioContext
   private mic?: Mic
   private player?: PcmPlayer
   private session?: Session
+  private releaseWake?: () => void
   private stopping = false
   private ready = false // true once the server has sent setupComplete
   private kickoff = ''
@@ -49,11 +52,6 @@ export class Tutor {
   constructor(private events: TutorEvents) {}
 
   async start(opts: StartOptions): Promise<void> {
-    const apiKey = __GEMINI_API_KEY__
-    if (!apiKey) {
-      this.events.status('error', 'No API key. Put GEMINI_API_KEY in .env.local and restart npm run dev.')
-      return
-    }
     this.stopping = false
     this.ready = false
     this.kickedOff = false
@@ -62,14 +60,20 @@ export class Tutor {
     this.events.status('connecting')
 
     try {
+      // Create the AudioContext before any await, while we're still inside the
+      // tap, or iOS keeps it suspended.
       this.ctx = new AudioContext()
+      const token = fetchLiveToken() // runs while the mic starts
+      token.catch(() => {}) // awaited below; stops an unhandled rejection if the mic fails first
+      setAudioSession('play-and-record')
+      this.releaseWake = keepScreenAwake()
       await this.ctx.resume()
       this.player = new PcmPlayer(this.ctx)
       this.mic = await startMic(this.ctx, (c) => this.onMicChunk(c))
 
       const prompt = prompts[opts.mode]
       this.kickoff = prompt.kickoff
-      const ai = new GoogleGenAI({ apiKey, httpOptions: { apiVersion: config.apiVersion } })
+      const ai = new GoogleGenAI({ apiKey: await token, httpOptions: { apiVersion: config.apiVersion } })
       this.events.log(`connecting to ${opts.model} with voice ${opts.voice}`)
       this.session = await ai.live.connect({
         model: opts.model,
@@ -109,11 +113,14 @@ export class Tutor {
     this.ready = false
     this.mic?.stop()
     this.player?.clear()
+    this.releaseWake?.()
+    setAudioSession('auto')
     this.ctx?.close().catch(() => {})
     this.mic = undefined
     this.player = undefined
     this.ctx = undefined
     this.session = undefined
+    this.releaseWake = undefined
   }
 
   private onMicChunk({ pcm, rms }: MicChunk): void {
@@ -176,7 +183,7 @@ export class Tutor {
     if (this.stopping) return
     let detail = `Connection closed (${e.code}${e.reason ? `: ${e.reason}` : ''})`
     if (!this.ready && !e.reason) {
-      detail += '. It never connected: check the API key, the model name and that the free tier has quota left.'
+      detail += '. It never connected: check the model name and that the free tier has quota left.'
     }
     this.events.log(detail)
     this.events.status('error', detail)

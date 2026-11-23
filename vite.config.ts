@@ -1,14 +1,11 @@
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { cloudflare } from '@cloudflare/vite-plugin'
 
-// Phase 0 only: the Gemini API key is read from .env.local and injected
-// into the dev server. Production builds always get an empty string, so the
-// key can never end up in dist/. Phase 1 replaces this with Worker tokens.
-export default defineConfig(({ command, mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
-  const devKey = command === 'serve' ? (env.GEMINI_API_KEY ?? '') : ''
-  return {
-    plugins: [react()],
-    define: { __GEMINI_API_KEY__: JSON.stringify(devKey) },
-  }
+// One Cloudflare Worker serves the built app and /api (worker/index.ts), and
+// `npm run dev` runs both locally. The Gemini key only ever lives in the Worker:
+// locally wrangler reads it from .env.local, in production it's a Worker secret.
+// Vite never exposes it to the browser because it has no VITE_ prefix.
+export default defineConfig({
+  plugins: [react(), cloudflare()],
 })

@@ -33,9 +33,9 @@ Turn the phase 0 spike into a real app: both users hold a 10 minute spoken conve
 
 ### Hosting, tokens and login
 
-- [ ] Cloudflare Pages project and one Worker
-- [ ] Worker endpoint that mints a short-lived Gemini token (API key stored as a Worker secret)
-- [ ] Switch the app from the local API key to Worker tokens
+- [ ] One Worker serving the app as static assets (replaces Pages, see PROJECT.md decision 6)
+- [x] Worker endpoint that mints a short-lived Gemini token (API key stored as a Worker secret)
+- [x] Switch the app from the local API key to Worker tokens
 - [ ] Cloudflare Access in front of the site and Worker, allow list of two emails
 
 ### Session management
@@ -69,7 +69,7 @@ Turn the phase 0 spike into a real app: both users hold a 10 minute spoken conve
 
 - [ ] Manifest using the mascot icons in `public/icons/`, install to iPhone home screen
 - [ ] Confirm mic permission and audio playback work in the installed app
-- [ ] Keep the screen awake during a session
+- [x] Keep the screen awake during a session
 
 ## Things to measure
 

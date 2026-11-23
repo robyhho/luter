@@ -1,0 +1,23 @@
+// One Worker serves the built app (static assets) and the /api routes.
+// Deploy with `npm run deploy`. Setup steps are in README.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "luter",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true },
+  // Only the main workers.dev URL, which sits behind Access.
+  "preview_urls": false,
+  "vars": {
+    // From Cloudflare Access once it's switched on for this Worker (README.md).
+    // Neither is a secret. While they're empty, /api/token only works on localhost.
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": ""
+  }
+  // GEMINI_API_KEY is a secret: `npx wrangler secret put GEMINI_API_KEY`.
+  // Locally, wrangler reads it from .env.local.
+}

@@ -8,8 +8,9 @@ export const config = {
   // "Free of charge" on the Gemini API free tier. The others are fallbacks if the
   // voice or latency test fails.
   model: 'gemini-3.8-live',
-  // The SDK defaults to v1, which rejects Live sessions (closes with 1006). v1beta works.
-  apiVersion: 'v1beta',
+  // Ephemeral tokens from our Worker only work on v1alpha. (The SDK's default,
+  // v1, rejects Live sessions with 1006.)
+  apiVersion: 'v1alpha',
   models: [
     'gemini-3.8-live',
     'gemini-3.1-flash-live-preview',

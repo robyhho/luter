@@ -5,7 +5,7 @@ Decisions and design detail are in [PROJECT.md](PROJECT.md). This file only trac
 | Phase | File | Goal | Status |
 |---|---|---|---|
 | 0 | [PHASEZERO.md](PHASEZERO.md) | Spike: talk to it on the Mac, decide if latency and voice are good enough | Done |
-| 1 | [PHASEONE.md](PHASEONE.md) | Talk to it on your phone: voice loop, live pinyin transcript, dictionary, Explain | Not started |
+| 1 | [PHASEONE.md](PHASEONE.md) | Talk to it on your phone: voice loop, live pinyin transcript, dictionary, Explain | In progress |
 | 2 | [PHASETWO.md](PHASETWO.md) | Profiles and Mandarin topic mode: it knows what you know and stretches it | Not started |
 | 3 | [PHASETHREE.md](PHASETHREE.md) | English fluency mode with feedback cards | Not started |
 | 4 | [PHASEFOUR.md](PHASEFOUR.md) | Review, progress and polish | Not started |

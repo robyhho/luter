@@ -28,7 +28,7 @@ Two users, each with their own profile.
 | 3 | Start on the free tier, switch to paid only if it causes problems | Paid is roughly 10p per 10 minute session, and the switch is a billing change with no code change |
 | 4 | Web app installed to the iPhone home screen (PWA), no native app | Cheapest path. Mic and WebSockets work in iOS home screen apps |
 | 5 | No LiveKit or other voice framework | Not needed for two users |
-| 6 | Cloudflare Pages (hosting), one Worker (tokens and API), D1 (data), Access (login) | All free at this scale. Access gives email login with no auth code to write |
+| 6 | One Cloudflare Worker serving the app as static assets plus the API (tokens), D1 (data), Access (login) | All free at this scale. One deploy and one origin, so no CORS and one Access app. Changed from Pages plus a separate Worker on 2026-11-22 |
 | 7 | Each profile has a target language and a support language | One engine covers Mandarin with English help and English with Mandarin help |
 | 8 | Two modes: topic mode and fluency mode | A beginner and a working-level speaker need opposite things |
 | 9 | Mandarin knowledge is modelled by topic, with words tagged by topic | "Talk about ordering food, plus these 3 new words" is far easier for the model to obey than a strict word list |
@@ -50,7 +50,7 @@ Two users, each with their own profile.
 | Voice | Gemini Live API over WebSocket (`@google/genai`), model name held in config |
 | Background text | Gemini Flash (translations, feedback cards, vocabulary checks) |
 | Auth to Gemini | Short-lived tokens minted by the Worker, API key never in the browser |
-| Backend | One Cloudflare Worker |
+| Backend | One Cloudflare Worker with static assets, built and run locally with the Cloudflare Vite plugin |
 | Database | Cloudflare D1 |
 | Login | Cloudflare Access (email code) |
 | Pinyin | `pinyin-pro`, in the browser |
@@ -91,6 +91,7 @@ Two users, each with their own profile.
 | Free tier data is used to improve Google products | Accepted for now, goes away on paid |
 | Live models are renamed and retired often | Model name in config |
 | `@google/genai` connects Live on the `v1` API by default, which rejects the session (1006). Found 2026-11-22 | `apiVersion: 'v1beta'` in config. Ephemeral tokens use `v1alpha`, and both were tested working with an AI Studio `AQ.` key |
+| Ephemeral tokens are one-use and must start a session within a minute | Fetch a fresh token from the Worker for every connect, including reconnects |
 
 Sessions are designed to be about 10 minutes, one scenario each, so most never need the reconnect.
 

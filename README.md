@@ -4,7 +4,7 @@ Voice conversation language tutor. See [PROJECT.md](PROJECT.md) for what and why
 
 Personal project: personal GitHub, personal Google account, personal Cloudflare. Nothing work-related.
 
-## Run the phase 0 spike
+## Run locally
 
 1. **Gemini API key (personal Google account).** Sign in to [Google AI Studio](https://aistudio.google.com/apikey) with your personal Google account, create a project called `luter`, and create an API key in it. Don't add billing.
 2. **Install and configure.**
@@ -16,15 +16,32 @@ Personal project: personal GitHub, personal Google account, personal Cloudflare.
    ```sh
    npm run dev
    ```
-   Open http://localhost:5173 in Chrome or Safari, allow the mic, press Start. Use headphones.
+   Open http://localhost:5173, allow the mic, press Start. Use headphones.
 
-The key is only injected by the dev server. `npm run build` always gets an empty key, so it can never end up in `dist/`.
+`npm run dev` runs the app and the Worker together (Cloudflare Vite plugin). The browser asks the Worker's `/api/token` for a one-use Gemini token, and the Worker reads the key from `.env.local`. The key never reaches the browser or `dist/client`.
 
-## Testing phase 0
+## Deploy (personal Cloudflare account)
 
-Run each check from [PHASEZERO.md](PHASEZERO.md):
+One Worker serves the app and `/api/token`. Cloudflare Access sits in front so only the two of us can open it.
 
-- Latency (end of your speech to first audio) appears live under the controls.
+First time:
+
+1. **Log in to Cloudflare** with your personal account: `npx wrangler login`
+2. **Deploy once**: `npm run deploy`. Note the `https://luter.<subdomain>.workers.dev` URL.
+3. **Add the Gemini key as a Worker secret** (run it yourself, it prompts for the key): `npx wrangler secret put GEMINI_API_KEY`
+4. **Turn on Cloudflare Access.** In the dashboard: Workers & Pages → luter → Settings → Domains & Routes → workers.dev → enable Cloudflare Access. If it asks you to set up Zero Trust first, pick a team name and the Free plan.
+5. **Allow the two emails.** Zero Trust → Access → Applications → the luter app → policy: Include → Emails → both addresses. Login method: one-time PIN. Set the session duration to 1 month so the phone app rarely asks you to sign in.
+6. **Give the Worker the Access details.** From the Access app, copy the team domain (`https://<team>.cloudflareaccess.com`) and the Application Audience (AUD) tag into `vars` in `wrangler.jsonc`, then `npm run deploy` again. Until these are set, `/api/token` refuses every request that isn't from localhost.
+
+After that, `npm run deploy` is all you need.
+
+## Install on the iPhone
+
+Open the workers.dev URL in Safari, sign in with the email code, then Share → Add to Home Screen. Open Luter from the home screen, allow the mic, press Start.
+
+## Testing
+
+- Latency (end of your speech to first audio) appears live under the controls. Phase 0 baseline on the Mac: median 940ms.
 - Use **Copy report** at the end of a session to paste the settings, latency figures and transcript into notes.
 - If the voice or latency fails, try another voice or model from the dropdowns first. Then try `vadSilenceMs` in `src/config.ts` (lower is snappier, but you may get cut off mid-sentence).
 
@@ -47,6 +64,10 @@ The tutor's face is the mascot, an orange persimmon blob: source art in `design/
 | `src/config.ts` | Model, voices, audio settings, VAD silence |
 | `src/prompts.ts` | Rough topic (Mandarin) and fluency (English) prompts |
 | `src/live/tutor.ts` | Live session: connect, stream mic, play audio, transcript, latency |
+| `src/live/token.ts` | Gets a one-use Gemini token from the Worker |
+| `src/device.ts` | Screen wake lock and iOS audio session |
+| `worker/index.ts` | The Worker: `/api/token` (checks Access, mints the token) and serves the app |
+| `wrangler.jsonc` | Worker config, Access vars |
 | `src/audio/` | Mic capture (16kHz PCM), playback queue (24kHz PCM) |
 | `public/pcm-capture-worklet.js` | AudioWorklet that resamples the mic to 16kHz |
 
